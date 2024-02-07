@@ -1,0 +1,15 @@
+on:
+  workflow_dispatch:
+    inputs:
+      holo-nixpkgs-tag:
+        description: 'The holo-nixpkgs tag to build from'
+        required: true
+        type: string
+
+jobs:
+  build:
+    runs-on: 'ubuntu-latest'
+    steps:
+      - id: "build"
+        run: |
+          echo ${{ inputs.holo-nixpkgs-tag }}
