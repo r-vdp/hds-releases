@@ -48,6 +48,9 @@ jobs:
     outputs:
       release_name: ${{ steps.date.outputs.date }}
     steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: refs/heads/${{ github.ref_name }}
       - name: download x86_64-linux artifact
         uses: actions/download-artifact@v4
         with:
@@ -59,14 +62,19 @@ jobs:
         id: date
         run: echo "date=$(date +'%Y-%m-%d-%H%M%S')" >> ${GITHUB_OUTPUT}
       - name: Create Release
-        id: create_release
-        uses: softprops/action-gh-release@v1
-        with:
-          name: Release ${{ steps.date.outputs.date }}
-          tag_name: ${{ steps.date.outputs.date }}
-          token: ${{ secrets.GITHUB_TOKEN }}
-          files: |
-            holo-dev-server/holo-dev-server
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >-
+          gh release create ${{ steps.date.outputs.date }}
+          "holo-dev-server/holo-dev-server#holo-dev-server"
+          --title "Version ${{ steps.date.outputs.date }}"
+        #uses: softprops/action-gh-release@v1
+        #with:
+        #  name: Release ${{ steps.date.outputs.date }}
+        #  tag_name: ${{ steps.date.outputs.date }}
+        #  token: ${{ secrets.GITHUB_TOKEN }}
+        #  files: |
+        #    holo-dev-server/holo-dev-server
 
   update-sources:
     runs-on: ubuntu-latest
@@ -76,7 +84,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: "main"
+          ref: refs/heads/${{ github.ref_name }}
       - name: "install nix"
         uses: "cachix/install-nix-action@v22"
         with:
