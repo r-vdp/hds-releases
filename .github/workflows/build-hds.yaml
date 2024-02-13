@@ -65,16 +65,9 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: >-
-          gh release create ${{ github.ref_name }}
+          gh release create ${{ steps.date.outputs.date }}
           "holo-dev-server/holo-dev-server#holo-dev-server"
           --title "Version ${{ steps.date.outputs.date }}"
-        #uses: softprops/action-gh-release@v1
-        #with:
-        #  name: Release ${{ steps.date.outputs.date }}
-        #  tag_name: ${{ steps.date.outputs.date }}
-        #  token: ${{ secrets.GITHUB_TOKEN }}
-        #  files: |
-        #    holo-dev-server/holo-dev-server
 
   update-sources:
     runs-on: ubuntu-latest
