@@ -26,12 +26,12 @@ jobs:
         run: |
           curl -v -L \
                -H "Authorization: Bearer ${{ secrets.HOLO_NIXPKGS_PAT }}" \
-               https://api.github.com/repos/r-vdp/holo-nixpkgs/tarball/${{ inputs.holo-nixpkgs-tag }} \ |
+               https://api.github.com/repos/r-vdp/holo-nixpkgs/tarball/${{ inputs.holo-nixpkgs-tag }} | \
             tar -xz --strip-components=1 --
 
       - name: "build holo-dev-server"
         run: |
-          nix build -vL '.#legacyPackages.${{ matrix.system }}.holo-dev-server-bin' --max-jobs 0
+          nix build -vL '.#legacyPackages.${{ matrix.system }}.holo-dev-server-bin' #--max-jobs 0
 
       - name: upload artifact
         uses: actions/upload-artifact@v4
