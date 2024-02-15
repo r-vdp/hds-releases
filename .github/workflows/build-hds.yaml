@@ -31,14 +31,13 @@ jobs:
 
       - name: "build holo-dev-server"
         run: |
-          # TODO: build the bundle on hydra so that we can set max-jobs to 0
-          nix bundle -vL '.#legacyPackages.${{ matrix.system }}.holo-dev-server' #--max-jobs 0
+          nix build -vL '.#legacyPackages.${{ matrix.system }}.holo-dev-server' #--max-jobs 0
 
       - name: upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: holo-dev-server-${{ inputs.holo-nixpkgs-tag }}-${{ matrix.system }}
-          path: ./holo-dev-server
+          path: ./result/holo-dev-server
 
   upload-binary:
     runs-on: ubuntu-latest
