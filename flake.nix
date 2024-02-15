@@ -1,5 +1,5 @@
 {
   outputs = { self }: {
-    legacyPackages = import ./packages.nix;
+    packages = import ./packages.nix;
   };
 }
