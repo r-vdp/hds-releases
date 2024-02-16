@@ -36,20 +36,21 @@ jobs:
 
       - name: "build holo-dev-server"
         run: |
-          nix build -vL '.#legacyPackages.${{ matrix.system }}.holo-dev-server'
+          nix build --out-link holo-dev-server -vL '.#legacyPackages.${{ matrix.system }}.holo-dev-server'
 
       - name: "generate dependency information"
         run: |
-          ./hds-release/generate-dependency-info.py '.#legacyPackages.${{ matrix.system }}.holo-dev-server' \
-          > depinfo.json
+          ./hds-release/generate-dependency-info.py \
+            '.#legacyPackages.${{ matrix.system }}.holo-dev-server' | \
+          jq . \
+          > holo-dev-server/depinfo.json
 
       - name: upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: holo-dev-server-${{ inputs.holo-nixpkgs-tag }}-${{ matrix.system }}
           path: |
-            result
-            depinfo.json
+            holo-dev-server
           if-no-files-found: error
 
   upload-binary:
@@ -82,7 +83,6 @@ jobs:
           gh release create ${{ steps.date.outputs.date }}
           --title "Version ${{ steps.date.outputs.date }}"
           "holo-dev-server.tar.gz"
-          "depinfo.json"
 
   update-sources:
     runs-on: ubuntu-latest
@@ -116,9 +116,6 @@ jobs:
             };
           }
           EOF
-      - name: fetch depinfo.json
-        run: |
-          curl --location https://github.com/${{ github.repository }}/releases/download/${{ needs.upload-binary.outputs.release_name }}/depinfo.json --output ./depinfo.json
       - name: test if flake works
         run: |
           nix flake show --all-systems

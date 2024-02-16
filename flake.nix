@@ -7,7 +7,7 @@
         inherit (nixpkgs) lib;
         system = "x86_64-linux";
         pkgs = nixpkgs.legacyPackages.${system};
-        src = import ./sources.nix;
+        src = (import ./sources.nix).${system}.holo-dev-server-bin;
 
         runtimeDeps = lib.concatMapStringsSep " "
           (dep:
@@ -15,12 +15,12 @@
               ${dep.drvPath} = { outputs = [ "${dep.output}" ]; };
             }
           )
-          (lib.importJSON ./depinfo.json);
+          (lib.importJSON "${src}/depinfo.json");
       in
       pkgs.runCommand "holo-dev-server-bin" { } ''
         mkdir -p $out/bin
         echo ${runtimeDeps} > $out/.runtimedeps
-        cp -a ${src.${system}.holo-dev-server-bin}/bin/holo-dev-server $out/bin/holo-dev-server
+        cp -a ${src}/bin/holo-dev-server $out/bin/holo-dev-server
       '';
   };
 }
