@@ -125,7 +125,7 @@ jobs:
         run: |
           nix flake show --all-systems
           nix flake check -L --all-systems --no-build
-      - name: commit and push packages.nix, if it changed
+      - name: commit and push sources.nix
         run: |
           if [[ "$(git status --porcelain)" != "" ]]; then
             git config --local user.email "github-actions[bot]@users.noreply.github.com"
