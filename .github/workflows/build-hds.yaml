@@ -36,15 +36,18 @@ jobs:
 
       - name: "build holo-dev-server"
         run: |
-          nix build --out-link result -vL '.#legacyPackages.${{ matrix.system }}.holo-dev-server'
+          nix build -L \
+            --max-jobs 0 \
+            --out-link result \
+            '.#legacyPackages.${{ matrix.system }}.holo-dev-server'
+          # Copy to a writable dir so that we can add the depinfo file
           mkdir holo-dev-server
           cp -a result/bin holo-dev-server/bin
 
       - name: "generate dependency information"
         run: |
           ./hds-release/generate-dependency-info.py \
-            '.#legacyPackages.${{ matrix.system }}.holo-dev-server' | \
-          jq . \
+            '.#legacyPackages.${{ matrix.system }}.holo-dev-server' \
           > holo-dev-server/depinfo.json
 
       - name: upload artifact
@@ -127,7 +130,7 @@ jobs:
           if [[ "$(git status --porcelain)" != "" ]]; then
             git config --local user.email "github-actions[bot]@users.noreply.github.com"
             git config --local user.name "github-actions[bot]"
-            git add sources.nix depinfo.json
+            git add sources.nix
             git commit -m "update to release ${{ needs.upload-binary.outputs.release_name }}"
             git push origin HEAD:refs/heads/main
           fi

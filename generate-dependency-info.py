@@ -73,7 +73,7 @@ def main():
     args = parser.parse_args()
 
     buildinfo = build(args.attr)
-    print(json.dumps(dependency_info(buildinfo.output["out"])))
+    print(json.dumps(dependency_info(buildinfo.output["out"]), indent=2))
 
 
 if __name__ == "__main__":
