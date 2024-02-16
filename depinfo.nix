@@ -1,0 +1,1 @@
+[{"drv": "/nix/store/r0zigdj54r3kf5la1bnvadrrb595krlz-glibc-2.38-44.drv", "outputs": {"out": "/nix/store/cyrrf49i2hm1w7vn2j945ic3rrzgxbqs-glibc-2.38-44"}}, {"drv": "/nix/store/qb6j8v8z50shmrgsj2pk4fwrk2ff5jpn-hello-2.12.1.drv", "outputs": {"out": "/nix/store/63l345l7dgcfz789w1y93j1540czafqh-hello-2.12.1"}}]
