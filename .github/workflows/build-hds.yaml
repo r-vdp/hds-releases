@@ -36,7 +36,9 @@ jobs:
 
       - name: "build holo-dev-server"
         run: |
-          nix build --out-link holo-dev-server -vL '.#legacyPackages.${{ matrix.system }}.holo-dev-server'
+          nix build --out-link result -vL '.#legacyPackages.${{ matrix.system }}.holo-dev-server'
+          mkdir holo-dev-server
+          cp -a result/bin holo-dev-server/bin
 
       - name: "generate dependency information"
         run: |
