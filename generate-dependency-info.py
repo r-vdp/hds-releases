@@ -4,13 +4,14 @@ import argparse
 import json
 import subprocess
 
-from dataclasses import dataclass
+from collections.abc import Iterable
+from typing import TypedDict
 
 
-@dataclass(frozen=True)
-class BuildInfo:
+class BuildInfo(TypedDict):
     drvPath: str
     output: str
+    outpath: str
 
 
 def build(attr: str) -> BuildInfo:
@@ -20,8 +21,16 @@ def build(attr: str) -> BuildInfo:
         capture_output=True,
     )
     p.check_returncode()
-    buildinfo = json.loads(p.stdout)[0]
-    return BuildInfo(buildinfo["drvPath"], buildinfo["outputs"])
+    # We always have only one result since we only pass one
+    # attrpath to nix build
+    buildinfo = ensure_single(json.loads(p.stdout))
+    output = ensure_single(buildinfo["outputs"].keys())
+
+    return {
+        "drvPath": buildinfo["drvPath"],
+        "output": output,
+        "outpath": buildinfo["outputs"][output],
+    }
 
 
 def dependency_info(outpath: str) -> list[dict]:
@@ -33,7 +42,7 @@ def dependency_info(outpath: str) -> list[dict]:
         drvInfo = json.loads(p.stdout)
         # We always have only one result since we only pass one
         # outpath to nix derivation show
-        drvpath = list(drvInfo.keys())[0]
+        drvpath = ensure_single(drvInfo.keys())
 
         p = subprocess.run(
             [
@@ -67,13 +76,22 @@ def dependency_info(outpath: str) -> list[dict]:
     return list(map(getpathinfo, p.stdout.splitlines()))
 
 
+def ensure_single(iterable: Iterable):  # noqa: E741
+    it = iter(iterable)
+    head = next(it, None)
+    if head and not next(it, False):
+        return head
+    else:
+        raise Exception("I was expecting an iterator with only one element!")
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("attr", type=str)
     args = parser.parse_args()
 
     buildinfo = build(args.attr)
-    print(json.dumps(dependency_info(buildinfo.output["out"]), indent=2))
+    print(json.dumps(dependency_info(buildinfo["outpath"]), indent=2))
 
 
 if __name__ == "__main__":
