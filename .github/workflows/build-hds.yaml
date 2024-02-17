@@ -85,7 +85,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: >-
           gh release create ${{ steps.date.outputs.date }}
-          --repo ${{ github.action_repository }}
+          --repo ${{ github.repository }}
           --title "Version ${{ steps.date.outputs.date }}"
           "holo-dev-server.tar.gz"
 
