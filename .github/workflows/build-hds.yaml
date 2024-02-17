@@ -16,8 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref_name }}
-          path: "hds-release"
+          path: "hds-releases"
 
       - name: "install nix"
         uses: "cachix/install-nix-action@v22"
@@ -27,7 +26,7 @@ jobs:
             trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= cache.holo.host-1:lNXIXtJgS9Iuw4Cu6X0HINLu9sTfcjEntnrgwMQIMcE= cache.holo.host-2:ZJCkX3AUYZ8soxTLfTb60g+F3MkWD7hkH9y8CgqwhDQ=
             substituters = https://cache.holo.host https://cache.nixos.org/
 
-      - name: "download tag"
+      - name: "download holo-nixpkgs tag"
         run: |
           curl -v -L \
                -H "Authorization: Bearer ${{ secrets.HOLO_NIXPKGS_PAT }}" \
@@ -46,7 +45,7 @@ jobs:
 
       - name: "generate dependency information"
         run: |
-          ./hds-release/generate-dependency-info.py \
+          ./hds-releases/generate-dependency-info.py \
             '.#legacyPackages.${{ matrix.system }}.holo-dev-server' \
           > holo-dev-server/depinfo.json
 
@@ -66,26 +65,27 @@ jobs:
     outputs:
       release_name: ${{ steps.date.outputs.date }}
     steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.ref_name }}
       - name: download x86_64-linux artifact
         uses: actions/download-artifact@v4
         with:
           name: holo-dev-server-${{ inputs.holo-nixpkgs-tag }}-x86_64-linux
           path: holo-dev-server
+
       - name: "Make the script executable"
         run: |
           chmod +x holo-dev-server/bin/holo-dev-server
           tar -czf holo-dev-server.tar.gz holo-dev-server
+
       - name: Get current date
         id: date
         run: echo "date=$(date +'%Y-%m-%d-%H%M%S')" >> ${GITHUB_OUTPUT}
+
       - name: Create Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: >-
           gh release create ${{ steps.date.outputs.date }}
+          --repo ${{ github.action_repository }}
           --title "Version ${{ steps.date.outputs.date }}"
           "holo-dev-server.tar.gz"
 
@@ -96,8 +96,7 @@ jobs:
     needs: upload-binary
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.ref_name }}
+
       - name: "install nix"
         uses: "cachix/install-nix-action@v22"
         with:
@@ -105,11 +104,13 @@ jobs:
           extra_nix_config: |
             trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= cache.holo.host-1:lNXIXtJgS9Iuw4Cu6X0HINLu9sTfcjEntnrgwMQIMcE= cache.holo.host-2:ZJCkX3AUYZ8soxTLfTb60g+F3MkWD7hkH9y8CgqwhDQ=
             substituters = https://cache.holo.host https://cache.nixos.org/
+
       - name: prefetch x86_64-linux binary
         id: prefetch-x86_64-linux
         run: |
           tar -xzf <(curl --location https://github.com/${{ github.repository }}/releases/download/${{ needs.upload-binary.outputs.release_name }}/holo-dev-server.tar.gz)
           echo "hash=$(nix hash path --base32 holo-dev-server/)" >> ${GITHUB_OUTPUT}
+
       - name: overwrite sources.nix
         run: |
           cat > sources.nix << EOF
@@ -121,10 +122,12 @@ jobs:
             };
           }
           EOF
+
       - name: test if flake works
         run: |
           nix flake show --all-systems
           nix flake check -L --all-systems --no-build
+
       - name: commit and push sources.nix
         run: |
           if [[ "$(git status --porcelain)" != "" ]]; then
