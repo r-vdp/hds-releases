@@ -148,10 +148,6 @@ jobs:
           }
           EOF
 
-      - name: overwrite depinfo.json
-        run: |
-          cp holo-dev-server/depinfo.json depinfo.json
-
       - name: test if flake works
         run: |
           nix flake show --all-systems
@@ -162,7 +158,7 @@ jobs:
           if [[ "$(git status --porcelain)" != "" ]]; then
             git config --local user.email "github-actions[bot]@users.noreply.github.com"
             git config --local user.name "github-actions[bot]"
-            git add sources.nix depinfo.json
+            git add sources.nix
             git commit -m "update to release ${{ needs.upload-binary.outputs.release_name }}"
             git push origin HEAD:refs/heads/main
           fi

@@ -42,7 +42,7 @@
                     ${dep.drvPath} = { outputs = [ "${dep.output}" ]; };
                   }
                 )
-                (lib.importJSON ./depinfo.json);
+                (lib.importJSON "${src}/depinfo.json");
             in
             pkgs.runCommand "holo-dev-server-bin" { } ''
               mkdir -p $out/bin
