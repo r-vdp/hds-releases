@@ -21,11 +21,11 @@
 
               runtimeDeps = lib.concatMapStringsSep " "
                 (dep:
-                  builtins.appendContext dep.outPath {
+                  builtins.appendContext "" {
                     ${dep.drvPath} = { outputs = [ "${dep.output}" ]; };
                   }
                 )
-                (lib.importJSON "${src}/depinfo.json");
+                (lib.importJSON ./depinfo.json);
             in
             pkgs.runCommand "holo-dev-server-bin" { } ''
               mkdir -p $out/bin
