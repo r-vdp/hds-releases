@@ -47,7 +47,7 @@ jobs:
       - name: "generate dependency information"
         run: |
           ./hds-releases/generate-dependency-info.py \
-            '.#legacyPackages.${{ matrix.system }}.holo-dev-server' \
+            '.#legacyPackages.${{ matrix.system }}.holo-dev-server-bin' \
           > holo-dev-server/depinfo.json
 
       - name: upload artifact
