@@ -1,0 +1,37 @@
+[
+  {
+    "drvPath": "/nix/store/nkiv60zlijklzzbvnvy8cjglz8rkygjs-tzdata-2022g.drv",
+    "output": "out",
+    "outPath": "/nix/store/438yrq5a254rhfmiwkxlv0yl6y7qfrjj-tzdata-2022g"
+  },
+  {
+    "drvPath": "/nix/store/3yi68ddsf06w700a0n32ya66fwl6sjb9-iana-etc-20220915.drv",
+    "output": "out",
+    "outPath": "/nix/store/grgb4f9mfaagy0fak4hbq086szdzgamh-iana-etc-20220915"
+  },
+  {
+    "drvPath": "/nix/store/yga41ddp6qkdzgqzhn2njv0a6lkcn3pd-mailcap-2.1.53.drv",
+    "output": "out",
+    "outPath": "/nix/store/h34f25wm9claxsc3cb3rspw4m2kgim86-mailcap-2.1.53"
+  },
+  {
+    "drvPath": "/nix/store/cj8152s2rbkyh7542wfhz7f5qc7617gr-glibc-2.35-224.drv",
+    "output": "out",
+    "outPath": "/nix/store/qq5hfdx1f7kg5icjsx4lhhklgfdmz5g3-glibc-2.35-224"
+  },
+  {
+    "drvPath": "/nix/store/9rx5z018dw9bk0b7h2klbbghlgf72hz6-go-1.20.2.drv",
+    "output": "out",
+    "outPath": "/nix/store/ahfshxs71b80vfw6kacjarpq5f4w5spl-go-1.20.2"
+  },
+  {
+    "drvPath": "/nix/store/bscqny0fw0sf6s87q83hay52q0i0qw5a-zlib-1.2.13.drv",
+    "output": "out",
+    "outPath": "/nix/store/bcyafn0vkii0rxkx7ac47krwv7bgaqsn-zlib-1.2.13"
+  },
+  {
+    "drvPath": "/nix/store/zf1npxb0rcjhbqx67ypb7nrd2c8imy9w-openssl-3.0.8.drv",
+    "output": "out",
+    "outPath": "/nix/store/gi7ca4y08z646rd3frczf58qshpm39vg-openssl-3.0.8"
+  }
+]
