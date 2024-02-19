@@ -155,7 +155,7 @@ jobs:
       - name: test if flake works
         run: |
           nix flake show --all-systems
-          nix flake check -L --all-systems --no-build
+          nix flake check -L
 
       - name: commit and push sources.nix
         run: |
