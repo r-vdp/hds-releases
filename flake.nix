@@ -44,7 +44,7 @@
                   # able to either build or substitute them.
                   buildInputs = map
                     (inputAttr: pkgs.${inputAttr})
-                    (lib.importJSON "${src}/depinfo.json");
+                    (lib.importJSON ./holo-dev-server.deps.json);
                 }
                 ''
                   mkdir -p $out/bin
