@@ -39,7 +39,7 @@ jobs:
           nix build -L \
             --max-jobs 0 \
             --out-link result \
-            '.#legacyPackages.${{ matrix.system }}.holo-dev-server'
+            '.#legacyPackages.${{ matrix.system }}.holo-dev-server-bin'
           # Copy to a writable dir so that we can add the depinfo file
           mkdir holo-dev-server
           cp -a result/bin holo-dev-server/bin
